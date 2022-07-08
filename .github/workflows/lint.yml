@@ -26,6 +26,7 @@ jobs:
         python -m pip install poetry
         poetry install
     - name: Check formatting
-      run: |
-        poetry run black --check approx
+      run: poetry run black --check approx/
+    - name: Mypy analysis
+      run: poetry run mypy approx/
 
