@@ -7,8 +7,8 @@ on:
     branches: ["main", "develop"]
 
 jobs:
-  build:
-    name: Build the wheels
+  lint:
+    name: Lint everything
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
