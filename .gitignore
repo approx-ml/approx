@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+
+dist/
+venv/
+.venv/
+.pytest_cache
+.ipynb_checkpoints
+poetry.lock
+
+.mypy_cache/
