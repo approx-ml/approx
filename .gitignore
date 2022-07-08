@@ -9,3 +9,6 @@ venv/
 poetry.lock
 
 .mypy_cache/
+
+.idea/
+.vscode/
