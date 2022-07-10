@@ -1,9 +1,9 @@
 """
 Contains stuff to be exported in the public API.
 """
+from approx.core import _vars
 from approx.core.backend.common import auto_select_backend
 from approx.core.device.common import DeviceEngine, auto_select_device
-from approx.core import _vars
 
 
 def auto_quantize(model, pretrained=True):

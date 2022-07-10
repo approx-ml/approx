@@ -61,13 +61,19 @@ class PyTorchBackend(BackendEngine):
             The quantized model
         """
         if pretrained:
-            qmodel = self.module.quantization.quantize_dynamic(model, {
-                # todo: this is definitely not enough
-                self.module.nn.Linear,
-                self.module.nn.Conv2d
-            }, dtype=self.module.qint8)
+            qmodel = self.module.quantization.quantize_dynamic(
+                model,
+                {
+                    # todo: this is definitely not enough
+                    self.module.nn.Linear,
+                    self.module.nn.Conv2d,
+                },
+                dtype=self.module.qint8,
+            )
             return qmodel
-        raise NotImplementedError("Currently not implemented for non-pretrained models")
+        raise NotImplementedError(
+            "Currently not implemented for non-pretrained models"
+        )
 
 
 class NumPyBackend(BackendEngine):
