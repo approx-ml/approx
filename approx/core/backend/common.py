@@ -28,6 +28,13 @@ def auto_select_backend() -> BackendEngine:
             and not attr.startswith("__")
         )
     ]
+
+    preferred_backends = ["TORCH"]
+    for backend_type in preferred_backends:
+        if importlib.util.find_spec(backend_type.lower()) is not None:
+            return set_backend(BackendType[backend_type])
+
+    # fallback
     for backend_type in backend_types:
         if importlib.util.find_spec(backend_type.lower()) is not None:
             return set_backend(BackendType[backend_type])
