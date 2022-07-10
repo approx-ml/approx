@@ -1,19 +1,17 @@
 """
 Contains stuff to be exported in the public API.
 """
-from contextlib import contextmanager
-
 from approx.core.backend.common import BackendEngine, auto_select_backend
 from approx.core.device.common import DeviceEngine, auto_select_device
 
 
-@contextmanager
-def auto_cast_all() -> None:
-    """Context manager that automatically casts and applies quantization to
-        any tensors created within the context.
+def auto_cast_all(*args) -> None:
+    """Automatically casts any tensors for automatic quantization
+
     Returns:
-        ContextManager: pass
+        None:
     """
+    # todo: unimplemented
     pass
 
 
