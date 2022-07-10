@@ -6,7 +6,7 @@ from approx.core.backend.common import auto_select_backend
 from approx.core.device.common import DeviceEngine, auto_select_device
 
 
-def auto_quantize(model, pretrained=True):
+def auto_quantize(model, pretrained: bool = True):
     """Turns a normal model into a quantized model, using an appropriate backend
 
     Args:
@@ -20,6 +20,9 @@ def auto_quantize(model, pretrained=True):
 
 def auto_cast_all(*args) -> None:
     """Automatically casts any tensors for automatic quantization
+
+    Notes:
+        This function is deprecated and planned for removal.
 
     Returns:
         None:
