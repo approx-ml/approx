@@ -22,6 +22,6 @@ def auto_set_backend() -> None:
     """
     Automatically selects an appropriate backend to utilize.
     Returns:
-
+        None
     """
     auto_select_backend()
