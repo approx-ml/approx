@@ -7,11 +7,11 @@ _APPROX_BACKEND: Optional[BackendEngine] = None
 _APPROX_DEVICE: Optional[DeviceEngine] = None
 
 
-def backend() -> BackendEngine:
+def backend() -> Optional[BackendEngine]:
     global _APPROX_BACKEND
     return _APPROX_BACKEND
 
 
-def device() -> DeviceEngine:
+def device() -> Optional[DeviceEngine]:
     global _APPROX_DEVICE
     return _APPROX_DEVICE
