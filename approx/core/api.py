@@ -3,7 +3,7 @@ Contains stuff to be exported in the public API.
 """
 from approx.core import _vars
 from approx.core.backend.common import auto_select_backend
-from approx.core.device.common import DeviceEngine, auto_select_device
+from approx.core.device.common import auto_select_device
 
 
 def auto_quantize(model, pretrained: bool = True):
@@ -13,7 +13,11 @@ def auto_quantize(model, pretrained: bool = True):
         model: The model to quantize.
         pretrained: Whether this model is pretrained
     """
-
+    if _vars._APPROX_BACKEND is None:
+        raise ValueError(
+            "No backend has been set. "
+            "Please call `approx.auto_set_backend()`."
+        )
     qmodel = _vars._APPROX_BACKEND.auto_quantize(model, pretrained)
     return qmodel
 
