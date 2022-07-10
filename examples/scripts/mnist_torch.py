@@ -6,6 +6,10 @@ import torch.utils.data as data
 from tqdm import tqdm
 from torchvision.transforms import ToTensor
 
+import approx
+
+approx.auto_select_backend()
+
 
 class BasicNN(nn.Module):
     def __init__(self):
@@ -42,20 +46,21 @@ model.to('cuda')
 optim = torch.optim.SGD(model.parameters(), lr=0.01)
 loss = nn.CrossEntropyLoss().to('cuda')
 
-num_epochs = 10
-for epoch_it in range(num_epochs):
-    prog = tqdm(enumerate(train_loader), total=len(train_loader))
-    for batch_num, (features, labels) in prog:
-        features = features.to('cuda')
-        labels = labels.to('cuda')
-        logits = model(features)
-        loss_value = loss(logits, labels)
-        optim.zero_grad()
-        loss_value.backward()
-        optim.step()
+with approx.auto_cast_all():
+    num_epochs = 10
+    for epoch_it in range(num_epochs):
+        prog = tqdm(enumerate(train_loader), total=len(train_loader))
+        for batch_num, (features, labels) in prog:
+            features = features.to('cuda')
+            labels = labels.to('cuda')
+            logits = model(features)
+            loss_value = loss(logits, labels)
+            optim.zero_grad()
+            loss_value.backward()
+            optim.step()
 
-        prog.set_postfix({
-            "epoch": epoch_it + 1,
-            "loss": loss_value.item()
-        })
-    prog.close()
+            prog.set_postfix({
+                "epoch": epoch_it + 1,
+                "loss": loss_value.item()
+            })
+        prog.close()
