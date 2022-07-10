@@ -3,7 +3,11 @@ Common backend handling
 """
 
 
-from approx.core.device._device import DeviceEngine, DeviceNotSupported, DeviceType
+from approx.core.device._device import (
+    DeviceEngine,
+    DeviceNotSupported,
+    DeviceType,
+)
 
 
 def auto_select_device() -> DeviceEngine:

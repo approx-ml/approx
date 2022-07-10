@@ -5,7 +5,7 @@ to have a look around.
 
 
 ## Dev setup
-We hope that you will find `approx` extremely easy to set up. 
+We hope that you will find `approx` extremely easy to set up.
 After cloning our repository, you can simply run
 
 ```bash

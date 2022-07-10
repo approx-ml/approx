@@ -30,5 +30,5 @@ like so
 <!-- Add any other context about the problem here. -->
 
 **System Information**
-- Operating System: 
+- Operating System:
 - Python Version:

@@ -29,4 +29,3 @@ jobs:
       run: poetry run black --check approx/
     - name: Mypy analysis
       run: poetry run mypy approx/
-
