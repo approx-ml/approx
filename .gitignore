@@ -12,3 +12,5 @@ poetry.lock
 
 .idea/
 .vscode/
+
+examples/**/datasets
