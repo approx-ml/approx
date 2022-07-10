@@ -5,12 +5,14 @@ Test Public API
 
 def test_auto_set_backend():
     """Tests that the auto_set_backend function works as expected."""
-    from approx.core.api import auto_set_backend
-    from approx.core.backend._backend import BackendType
+    # from approx.core.api import auto_set_backend
+    import approx
+    from approx.core.backend._backend import BackendType, BackendEngine
 
-    backend_engine = auto_set_backend()
-    assert backend_engine.type == BackendType.NUMPY
-    assert str(backend_engine) == "numpy"
+    approx.auto_set_backend()
+
+    assert isinstance(approx.backend(), BackendEngine)
+    assert str(approx.backend()) == "torch"
 
 
 def test_set_backend():

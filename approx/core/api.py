@@ -3,7 +3,7 @@ Contains stuff to be exported in the public API.
 """
 from approx.core.backend.common import auto_select_backend
 from approx.core.device.common import DeviceEngine, auto_select_device
-from approx.core._vars import _APPROX_BACKEND
+from approx.core import _vars
 
 
 def auto_quantize(model, pretrained=True):
@@ -14,7 +14,7 @@ def auto_quantize(model, pretrained=True):
         pretrained: Whether this model is pretrained
     """
 
-    qmodel = _APPROX_BACKEND.auto_quantize(model, pretrained)
+    qmodel = _vars._APPROX_BACKEND.auto_quantize(model, pretrained)
     return qmodel
 
 
@@ -29,19 +29,19 @@ def auto_cast_all(*args) -> None:
 
 
 def auto_set_backend() -> None:
-    """Automatically selects an appropriate backend to utilize.
+    """Automatically sets an appropriate backend for `approx` to use.
 
     Returns:
         None.
     """
-    global _APPROX_BACKEND
-    _APPROX_BACKEND = auto_select_backend()
+
+    _vars._APPROX_BACKEND = auto_select_backend()
 
 
-def auto_set_device() -> DeviceEngine:
-    """Automatically selects an appropriate device to utilize.
+def auto_set_device() -> None:
+    """Automatically sets an appropriate device for `approx` to use.
 
     Returns:
-        DeviceEngine: An instance of whatever device is most appropriate.
+        None.
     """
-    return auto_select_device()
+    _vars._APPROX_DEVICE = auto_select_device()
