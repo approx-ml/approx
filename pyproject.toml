@@ -48,6 +48,7 @@ filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.isort]
 profile = "black"
+line_length = 79
 
 [tool.black]
 line-length = 79 # override the default of 88

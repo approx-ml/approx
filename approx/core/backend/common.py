@@ -4,7 +4,11 @@ Common backend handling
 
 import importlib.util
 
-from approx.core.backend._backend import BackendEngine, BackendNotSupported, BackendType
+from approx.core.backend._backend import (
+    BackendEngine,
+    BackendNotSupported,
+    BackendType,
+)
 
 
 def auto_select_backend() -> BackendEngine:
