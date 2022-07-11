@@ -1,12 +1,14 @@
 """
 Contains stuff to be exported in the public API.
 """
+from typing import Any
+
 from approx.core import _vars
 from approx.core.backend.common import auto_select_backend
 from approx.core.device.common import auto_select_device
 
 
-def auto_quantize(model, pretrained: bool = True):
+def auto_quantize(model: Any, pretrained: bool = True) -> Any:
     """Turns a normal model into a quantized model, using an appropriate backend
 
     Args:
@@ -22,7 +24,7 @@ def auto_quantize(model, pretrained: bool = True):
     return qmodel
 
 
-def auto_cast_all(*args) -> None:
+def auto_cast_all(*args: Any) -> None:
     """Automatically casts any tensors for automatic quantization
 
     Notes:
