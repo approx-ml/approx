@@ -1,11 +1,11 @@
 """
 Contains stuff to be exported in the public API.
 """
-from typing import List, Optional, Callable, Any
+from typing import Any, Callable, List
 
 from approx.core import _vars
 from approx.core.backend.common import auto_select_backend
-from approx.core.compare import Metric, CompareResult, _CompareRunner
+from approx.core.compare import CompareResult, Metric, _CompareRunner
 from approx.core.device.common import auto_select_device
 
 
@@ -25,9 +25,13 @@ def auto_quantize(model, pretrained: bool = True):
     return qmodel
 
 
-def compare(model, quantized_model, *,
-            eval_loop: Callable[[Any], List[List[float]]],
-            metrics: List[Metric]) -> CompareResult:
+def compare(
+    model,
+    quantized_model,
+    *,
+    eval_loop: Callable[[Any], List[List[float]]],
+    metrics: List[Metric]
+) -> CompareResult:
     """
     Compares your normal model with your quantized model
 

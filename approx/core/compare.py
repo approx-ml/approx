@@ -1,7 +1,6 @@
-from typing import List, Any, Dict, Callable
-import statistics
-
 import enum
+import statistics
+from typing import Any, Callable, Dict, List
 
 
 class Metric(enum.Enum):
@@ -10,12 +9,16 @@ class Metric(enum.Enum):
 
 
 class _EvalHistory:
-    def __init__(self, model: Any, metrics: List[Metric], histories: List[List[float]]):
+    def __init__(
+        self, model: Any, metrics: List[Metric], histories: List[List[float]]
+    ):
         assert len(metrics) == len(set(metrics)), "Metrics must be unique"
         try:
             str(model)
         except Exception:
-            raise ValueError("Currently does not support models which do not have `__str__`")
+            raise ValueError(
+                "Currently does not support models which do not have `__str__`"
+            )
         self.model = model
         self.metrics = metrics
         self._histories = histories
@@ -86,12 +89,13 @@ class _EvalHistory:
         """
         return self._histories[self.metrics.index(metric)]
 
+
 class CompareResult:
     """
     A result that is returned after calling `approx.compare`
     """
-    def __init__(self, results: List[_EvalHistory], __private=False):
-        assert __private, "Please do not construct this manually"
+
+    def __init__(self, results: List[_EvalHistory]):
         self._results = results
 
     def mean(self, metric: Metric) -> Dict[str, float]:
@@ -110,7 +114,9 @@ class CompareResult:
         Returns:
             A dictionary that maps your model to the mean of that metric's history
         """
-        return {str(result.model): result.mean(metric) for result in self._results}
+        return {
+            str(result.model): result.mean(metric) for result in self._results
+        }
 
     def std(self, metric: Metric) -> Dict[str, float]:
         r"""
@@ -128,7 +134,9 @@ class CompareResult:
         Returns:
             A dictionary that maps your model to the standard deviation of that metric's history
         """
-        return {str(result.model): result.std(metric) for result in self._results}
+        return {
+            str(result.model): result.std(metric) for result in self._results
+        }
 
     def __str__(self):
         # crude table printer, should be replaced with a more fancy one
@@ -137,8 +145,10 @@ class CompareResult:
         for result in self._results:
             for metric in result.metrics:
                 ret_val += "| {} | {} | {} | {} |\n".format(
-                    str(result.model), metric.name.lower(),
-                    result.mean(metric), result.std(metric)
+                    str(result.model),
+                    metric.name.lower(),
+                    result.mean(metric),
+                    result.std(metric),
                 )
         ret_val += "-" * 60
         return ret_val
@@ -148,17 +158,24 @@ class _CompareRunner:
     """
     Runs the compare operation
     """
-    def __init__(self, models: List[Any],
-                 eval_loop: Callable[[Any], List[List[float]]], metrics: List[Metric]):
+
+    def __init__(
+        self,
+        models: List[Any],
+        eval_loop: Callable[[Any], List[List[float]]],
+        metrics: List[Metric],
+    ):
         # todo: auto generate eval loop for certain backends
         self._models = models
         self._eval_loop = eval_loop
         self._metrics = metrics
-        self._results = []
+        self._results: List[_EvalHistory] = []
 
     def run(self) -> CompareResult:
         # todo: investigate multiprocessing
         for model in self._models:
             metric_hist = self._eval_loop(model)
-            self._results.append(_EvalHistory(model, self._metrics, metric_hist))
-        return CompareResult(self._results, __private=True)
+            self._results.append(
+                _EvalHistory(model, self._metrics, metric_hist)
+            )
+        return CompareResult(self._results)
