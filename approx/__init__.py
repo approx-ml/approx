@@ -1,4 +1,4 @@
-from approx.core._vars import _APPROX_BACKEND, _APPROX_DEVICE, backend, device
+from approx.core._vars import backend, device
 from approx.core.api import (
     auto_cast_all,
     auto_quantize,

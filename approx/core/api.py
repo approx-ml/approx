@@ -1,6 +1,7 @@
 """
 Contains stuff to be exported in the public API.
 """
+
 from typing import Any, Callable, List
 
 from approx.core import _vars
@@ -9,7 +10,7 @@ from approx.core.compare import CompareResult, Metric, _CompareRunner
 from approx.core.device.common import auto_select_device
 
 
-def auto_quantize(model, pretrained: bool = True):
+def auto_quantize(model: Any, pretrained: bool = True) -> Any:
     """Turns a normal model into a quantized model, using an appropriate backend
 
     Args:
@@ -57,7 +58,7 @@ def compare(
     return runner.run()
 
 
-def auto_cast_all(*args) -> None:
+def auto_cast_all(*args: Any) -> None:
     """Automatically casts any tensors for automatic quantization
 
     Notes:

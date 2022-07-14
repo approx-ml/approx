@@ -38,3 +38,11 @@ repos:
     hooks:
       - id: isort
         args: ["--profile", "black"]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.800
+    hooks:
+      - id: mypy
+        name: mypy
+        files: ^approx/
+        exclude: (/tests/)|(/docs/)|(/examples/)
+        args: ["--ignore-missing-imports"]
