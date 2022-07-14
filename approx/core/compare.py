@@ -40,7 +40,7 @@ class _EvalHistory:
         """
         # implementation note: this could be cached in case the history is very large
         # and computing may take significant time
-        return statistics.fmean(self[metric])
+        return statistics.mean(self[metric])
 
     def std(self, metric: Metric) -> float:
         r"""
