@@ -5,12 +5,13 @@ Test Public API
 
 def test_auto_set_backend():
     """Tests that the auto_set_backend function works as expected."""
-    from approx.core.api import auto_set_backend
-    from approx.core.backend._backend import BackendType
+    import approx
+    from approx.core.backend._backend import BackendEngine
 
-    backend_engine = auto_set_backend()
-    assert backend_engine.type == BackendType.NUMPY
-    assert str(backend_engine) == "numpy"
+    approx.auto_set_backend()
+
+    assert isinstance(approx.backend(), BackendEngine)
+    assert str(approx.backend()) == "torch"
 
 
 def test_set_backend():
@@ -27,7 +28,8 @@ def test_set_backend():
         )
     ]
     for backend_type in backend_types:
-        print(BackendType[backend_type])
+        if backend_type.lower() == "unknown":
+            continue
         backend_engine = set_backend(BackendType[backend_type])
         assert backend_engine.type == BackendType[backend_type]
         assert str(backend_engine) == backend_type.lower()
@@ -47,6 +49,8 @@ def test_set_device():
         )
     ]
     for device_type in device_types:
+        if device_type.lower() == "unknown":
+            continue
         device_engine = set_device(DeviceType[device_type])
         assert device_engine.type == DeviceType[device_type]
         assert str(device_engine) == device_type.lower()

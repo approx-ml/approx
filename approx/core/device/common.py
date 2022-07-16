@@ -60,7 +60,7 @@ def set_device(choice: DeviceType) -> DeviceEngine:
 
     # if asked for a device that doesn't exist, raise an error
     elif choice not in DeviceType:
-        raise DeviceNotSupported(choice)
+        raise DeviceNotSupported(str(choice))
 
     # if no device was asked for, set device to CPU
     else:

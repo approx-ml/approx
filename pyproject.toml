@@ -5,6 +5,18 @@ description = "Too lazy to quantize? Don't worry! Just tell approx to cast every
 license = "Apache-2.0"
 authors = ["sudomaze", "xiurobert"]
 readme = 'README.md'
+homepage = "https://github.com/approx-ml/approx"
+repository = "https://github.com/approx-ml/approx"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: Apache-2.0 License",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.7",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 
 [tool.poetry.dependencies]
 python = "^3.7.13"
@@ -27,9 +39,13 @@ pycln = "^2.0.1"
 ipykernel = "^6.15.1"
 
 [tool.mypy]
-files = ["approx"]
-show_error_codes = true
+files = ["^approx/"]
 pretty = true
+strict = true
+# show_error_codes = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+# ignore_missing_imports = true
+exclude = "(/tests/)|(/docs/)|(/examples/)"
 
 [tool.pytest]
 # log_cli = true

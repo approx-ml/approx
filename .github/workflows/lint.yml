@@ -25,7 +25,11 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install poetry
         poetry install
-    - name: Check formatting
+    - name: Check with black
       run: poetry run black --check approx/
+    - name: Check with pycln
+      run: poetry run pycln --check approx/
+    - name: Check with isort
+      run: poetry run isort --check approx/
     - name: Mypy analysis
       run: poetry run mypy approx/

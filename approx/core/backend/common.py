@@ -28,7 +28,18 @@ def auto_select_backend() -> BackendEngine:
             and not attr.startswith("__")
         )
     ]
+
+    preferred_backends = ["TORCH"]
+    for backend_type in preferred_backends:
+        if backend_type.lower() == "unknown":
+            continue
+        if importlib.util.find_spec(backend_type.lower()) is not None:
+            return set_backend(BackendType[backend_type])
+
+    # fallback
     for backend_type in backend_types:
+        if backend_type.lower() == "unknown":
+            continue
         if importlib.util.find_spec(backend_type.lower()) is not None:
             return set_backend(BackendType[backend_type])
 
@@ -62,4 +73,4 @@ def set_backend(choice: BackendType) -> BackendEngine:
         return NumPyBackend()
 
     # if asked for a backend that doesn't exist, raise an error
-    raise BackendNotSupported(choice)
+    raise BackendNotSupported(str(choice))
