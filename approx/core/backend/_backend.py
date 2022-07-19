@@ -62,14 +62,22 @@ class PyTorchBackend(BackendEngine):
             The quantized model
         """
         if pretrained:
+            if next(model.parameters()).device.type == "cuda":
+                model.cpu()
             qmodel = self.module.quantization.quantize_dynamic(
-                model,
+                model, # the original model
+                # a set of layers to dynamically quantize
                 {
-                    # todo: this is definitely not enough
                     self.module.nn.Linear,
+                    self.module.nn.LSTM,
+                    self.module.nn.GRU,
+                    self.module.nn.LSTMCell,
+                    self.module.nn.RNNCell,
+                    self.module.nn.GRUCell,
                     self.module.nn.Conv2d,
+                    self.module.nn.Conv3d,
                 },
-                dtype=self.module.qint8,
+                dtype=self.module.qint8, # the target dtype for quantized weights
             )
             return qmodel
         raise NotImplementedError(
