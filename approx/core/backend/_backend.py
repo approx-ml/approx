@@ -62,20 +62,24 @@ class PyTorchBackend(BackendEngine):
             The quantized model
         """
         if pretrained:
-            if next(model.parameters()).device.type == "cuda":
-                model.cpu()
+            model.cpu()
             qmodel = self.module.quantization.quantize_dynamic(
                 model, # the original model
                 # a set of layers to dynamically quantize
                 {
-                    self.module.nn.Linear,
-                    self.module.nn.LSTM,
-                    self.module.nn.GRU,
-                    self.module.nn.LSTMCell,
-                    self.module.nn.RNNCell,
-                    self.module.nn.GRUCell,
-                    self.module.nn.Conv2d,
-                    self.module.nn.Conv3d,
+                    self.module.nn.Linear: self.module.quantization.default_dynamic_qconfig,
+                    self.module.nn.LSTM: self.module.quantization.default_dynamic_qconfig,
+                    self.module.nn.GRU: self.module.quantization.default_dynamic_qconfig,
+                    self.module.nn.LSTMCell: self.module.quantization.default_dynamic_qconfig,
+                    self.module.nn.RNNCell: self.module.quantization.default_dynamic_qconfig,
+                    self.module.nn.GRUCell: self.module.quantization.default_dynamic_qconfig,
+
+                    # TODO(sudomaze): needed to specify the dtype, https://github.com/pytorch/pytorch/issues/65185
+                    self.module.nn.EmbeddingBag: self.module.quantization.qconfig.float_qparams_weight_only_qconfig,
+
+                    # Not supported yet
+                    # self.module.nn.Conv2d,
+                    # self.module.nn.Conv3d,
                 },
                 dtype=self.module.qint8, # the target dtype for quantized weights
             )
