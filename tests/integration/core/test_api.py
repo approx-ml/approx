@@ -2,6 +2,7 @@
 Test Public API
 """
 
+
 def test_auto_set_backend():
     """Tests that the auto_set_backend function works as expected."""
     import approx

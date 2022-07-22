@@ -33,7 +33,9 @@ def auto_cast_all(*args: Any) -> None:
     Returns:
         None:
     """
-    raise NotImplementedError("This function is deprecated and planned for removal.")
+    raise NotImplementedError(
+        "This function is deprecated and planned for removal."
+    )
 
 
 def auto_set_backend() -> None:

@@ -7,20 +7,21 @@ import torch
 
 PYTORCH_QUANTIZED_MODULES = [
     # quantized modules
-    'DynamicQuantizedLinear',
-    'DynamicQuantizedRNNCell',
-    'DynamicQuantizedLSTMCell',
-    'DynamicQuantizedGRUCell',
-
+    "DynamicQuantizedLinear",
+    "DynamicQuantizedRNNCell",
+    "DynamicQuantizedLSTMCell",
+    "DynamicQuantizedGRUCell",
     # quantized operations
-    'QuantizedEmbeddingBag',
+    "QuantizedEmbeddingBag",
 ]
+
+
 def assert_children(m: torch.nn.Module):
     children = dict(m.named_children())
     if children == {}:
         if (
-            hasattr(m, '_get_name') and 
-            m._get_name() in PYTORCH_QUANTIZED_MODULES
+            hasattr(m, "_get_name")
+            and m._get_name() in PYTORCH_QUANTIZED_MODULES
         ):
             if hasattr(m, "get_weight"):
                 for weight in m.get_weight().values():
@@ -28,19 +29,23 @@ def assert_children(m: torch.nn.Module):
                 for bias in m.get_bias().values():
                     assert bias.dtype == torch.float32
             elif hasattr(m, "_packed_params"):
-                if 'Dynamic' in m._get_name():
+                if "Dynamic" in m._get_name():
                     assert m._packed_params.dtype == torch.qint8
                 else:
                     assert m._packed_params.dtype == torch.quint8
             else:
-                raise NotImplementedError("No _all_weight_values or _packed_params")
+                raise NotImplementedError(
+                    "No _all_weight_values or _packed_params"
+                )
         else:
-            raise NotImplementedError("Quantized modules are not supported yet", m)
+            raise NotImplementedError(
+                "Quantized modules are not supported yet", m
+            )
     else:
         for name, child in children.items():
             if (
-                hasattr(child, '_get_name') and 
-                child._get_name() in PYTORCH_QUANTIZED_MODULES
+                hasattr(child, "_get_name")
+                and child._get_name() in PYTORCH_QUANTIZED_MODULES
             ):
                 if hasattr(child, "get_weight"):
                     for weight in child.get_weight().values():
@@ -48,14 +53,18 @@ def assert_children(m: torch.nn.Module):
                     for bias in child.get_bias().values():
                         assert bias.dtype == torch.float32
                 elif hasattr(child, "_packed_params"):
-                    if 'Dynamic' in child._get_name():
+                    if "Dynamic" in child._get_name():
                         assert child._packed_params.dtype == torch.qint8
                     else:
                         assert child._packed_params.dtype == torch.quint8
                 else:
-                    raise NotImplementedError("No _all_weight_values or _packed_params")
+                    raise NotImplementedError(
+                        "No _all_weight_values or _packed_params"
+                    )
             else:
-                raise NotImplementedError("Quantized modules are not supported yet", name, child)
+                raise NotImplementedError(
+                    "Quantized modules are not supported yet", name, child
+                )
     return True
 
 
@@ -95,36 +104,34 @@ class SingleLayer(torch.nn.Module):
         x = self.l1(x)
         return x
 
+
 @pytest.mark.parametrize(
     "type, supported",
     [
         # Linear
         ["linear", True],
-
         # ConvXd
         ["conv2d", False],
         ["conv3d", False],
         ["convtranspose2d", False],
         ["convtranspose3d", False],
-
         # Norms
         ["batchnorm", False],
         ["layernorm", False],
         ["instancenorm", False],
-
         # Embeddings
         ["embedding", False],
         ["embeddingbag", True],
-
         # RNNs
         ["rnn", True],
         ["lstm", True],
         ["gru", True],
-
-    ])
+    ],
+)
 def test_quantize_on_single_layer(type, supported):
     """Tests that the auto_set_backend function works as expected."""
     import approx
+
     model_fp32 = SingleLayer(type=type)
     approx.auto_set_backend()
     model_int8 = approx.auto_quantize(model_fp32, pretrained=True)
@@ -133,6 +140,7 @@ def test_quantize_on_single_layer(type, supported):
     else:
         with pytest.raises(NotImplementedError):
             assert_children(model_int8)
+
 
 class MultiLayers(torch.nn.Module):
     def __init__(self, type="linear"):
@@ -205,6 +213,7 @@ class MultiLayers(torch.nn.Module):
             self.l4 = torch.nn.GRUCell(32, 16)
         else:
             raise NotImplementedError(f"type {type} not implemented")
+
     def forward(self, x):
         x = self.l1(x)
         x = self.l2(x)
@@ -212,36 +221,34 @@ class MultiLayers(torch.nn.Module):
         x = self.l4(x)
         return x
 
+
 @pytest.mark.parametrize(
     "type, supported",
     [
         # Linear
         ["linear", True],
-
         # ConvXd
         ["conv2d", False],
         ["conv3d", False],
         ["convtranspose2d", False],
         ["convtranspose3d", False],
-
         # Norms
         ["batchnorm", False],
         ["layernorm", False],
         ["instancenorm", False],
-
         # Embeddings
         ["embedding", False],
         ["embeddingbag", True],
-
         # RNNs
         ["rnn", True],
         ["lstm", True],
         ["gru", True],
-
-    ])
+    ],
+)
 def test_quantize_on_multiple_layer(type, supported):
     """Tests that the auto_set_backend function works as expected."""
     import approx
+
     model_fp32 = MultiLayers(type=type)
     approx.auto_set_backend()
     model_int8 = approx.auto_quantize(model_fp32, pretrained=True)
