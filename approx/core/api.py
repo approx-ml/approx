@@ -24,20 +24,6 @@ def auto_quantize(model: Any, pretrained: bool = True) -> Any:
     return qmodel
 
 
-def auto_cast_all(*args: Any) -> None:
-    """Automatically casts any tensors for automatic quantization
-
-    Notes:
-        This function is deprecated and planned for removal.
-
-    Returns:
-        None:
-    """
-    raise NotImplementedError(
-        "This function is deprecated and planned for removal."
-    )
-
-
 def auto_set_backend() -> None:
     """Automatically sets an appropriate backend for `approx` to use.
 
