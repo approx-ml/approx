@@ -2,7 +2,7 @@
 Contains stuff to be exported in the public API.
 """
 
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Optional
 
 from approx.core import _vars
 from approx.core.backend.common import auto_select_backend
@@ -31,7 +31,7 @@ def compare(
     quantized_model,
     *,
     eval_loop: Callable[[Any], List[List[float]]],
-    metrics: List[Metric]
+    metrics: Optional[List[Metric]] = None
 ) -> CompareResult:
     """
     Compares your normal model with your quantized model
@@ -54,6 +54,8 @@ def compare(
     Returns:
         Useful statistical information
     """
+    if metrics is None or len(metrics) == 0:
+        metrics = [Metric.LOSS]
     runner = _CompareRunner([model, quantized_model], eval_loop, metrics)
     return runner.run()
 
