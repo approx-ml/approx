@@ -27,8 +27,8 @@ def auto_quantize(model: Any, pretrained: bool = True) -> Any:
 
 
 def compare(
-    model,
-    quantized_model,
+    model: Any,
+    quantized_model: Any,
     *,
     eval_loop: Callable[[Any], List[List[float]]],
     metrics: Optional[List[Metric]] = None
