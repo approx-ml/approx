@@ -2,6 +2,9 @@ import enum
 import statistics
 from typing import Any, Callable, Dict, List
 
+from rich.console import Console
+from rich.table import Table
+
 
 class Metric(enum.Enum):
     LOSS = 0
@@ -140,18 +143,23 @@ class CompareResult:
 
     def __str__(self) -> str:
         # crude table printer, should be replaced with a more fancy one
-        ret_val = "-" * 60 + "\n"
-        ret_val += "|    Model    |    Metric   |    Mean    |    Std    |\n"
-        for result in self._results:
-            for metric in result.metrics:
-                ret_val += "| {} | {} | {} | {} |\n".format(
-                    str(result.model),
-                    metric.name.lower(),
-                    result.mean(metric),
-                    result.std(metric),
+        console = Console()
+        for metric in self._results[0].metrics:
+            console.rule(f"[bold red]{metric.name.lower()}")
+            table = Table(
+                show_header=True, header_style="bold magenta", show_lines=True
+            )
+            table.add_column("Model", style="bold green")
+            table.add_column("Mean", justify="center")
+            table.add_column("Std", justify="center")
+            for result in self._results:
+                table.add_row(
+                    f"{result.model}",
+                    f"{result.mean(metric):.4f}",
+                    f"{result.std(metric):.4f}",
                 )
-        ret_val += "-" * 60
-        return ret_val
+            console.print(table)
+        return ""
 
 
 class _CompareRunner:
@@ -162,11 +170,13 @@ class _CompareRunner:
     def __init__(
         self,
         models: List[Any],
-        eval_loop: Callable[[Any], List[List[float]]],
+        test_loader: Any,
+        eval_loop: Callable[..., List[List[float]]],
         metrics: List[Metric],
     ):
         # todo: auto generate eval loop for certain backends
         self._models = models
+        self._test_loader = test_loader
         self._eval_loop = eval_loop
         self._metrics = metrics
         self._results: List[_EvalHistory] = []
@@ -174,7 +184,7 @@ class _CompareRunner:
     def run(self) -> CompareResult:
         # todo: investigate multiprocessing
         for model in self._models:
-            metric_hist = self._eval_loop(model)
+            metric_hist = self._eval_loop(model, self._test_loader)
             self._results.append(
                 _EvalHistory(model, self._metrics, metric_hist)
             )

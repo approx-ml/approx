@@ -29,9 +29,10 @@ def auto_quantize(model: Any, pretrained: bool = True) -> Any:
 def compare(
     model: Any,
     quantized_model: Any,
+    test_loader: Any,
     *,
     eval_loop: Callable[[Any], List[List[float]]],
-    metrics: Optional[List[Metric]] = None
+    metrics: Optional[List[Metric]] = None,
 ) -> CompareResult:
     """
     Compares your normal model with your quantized model
@@ -55,8 +56,13 @@ def compare(
         Useful statistical information
     """
     if metrics is None or len(metrics) == 0:
-        metrics = [Metric.LOSS]
-    runner = _CompareRunner([model, quantized_model], eval_loop, metrics)
+        metrics = [Metric.LOSS, Metric.ACCURACY]
+    for metric in metrics:
+        if metric not in Metric:
+            raise ValueError(f"{metric} is not a valid metric")
+    runner = _CompareRunner(
+        [model, quantized_model], test_loader, eval_loop, metrics
+    )
     return runner.run()
 
 
