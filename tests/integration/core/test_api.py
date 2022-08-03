@@ -5,7 +5,6 @@ Test Public API
 
 def test_auto_set_backend():
     """Tests that the auto_set_backend function works as expected."""
-    # from approx.core.api import auto_set_backend
     import approx
     from approx.core.backend._backend import BackendEngine
 

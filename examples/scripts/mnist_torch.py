@@ -44,14 +44,8 @@ if __name__ == "__main__":
     test_loader = data.DataLoader(mnist_test, batch_size=512, shuffle=True)
 
     model = BasicNN()
-    model = approx.auto_quantize(model, pretrained=True)
 
-    # qmodel = torch.quantization.quantize_dynamic(model, {nn.Linear, nn.Conv2d}, dtype=torch.qint8)
-    # qmodel.to('cuda')
-    print(model)
-    exit(0)
-
-    # model.to("cuda")
+    model.to("cuda")
     optim = torch.optim.SGD(model.parameters(), lr=0.001)
     loss = nn.CrossEntropyLoss().to("cuda")
 
@@ -60,7 +54,6 @@ if __name__ == "__main__":
     for epoch_it in range(num_epochs):
         prog = tqdm(enumerate(train_loader), total=len(train_loader))
         for batch_num, (features, labels) in prog:
-            # approx.auto_cast_all(features, labels)
             features = features.to("cuda")
             labels = labels.to("cuda")
             logits = model(features)
@@ -73,3 +66,11 @@ if __name__ == "__main__":
                 {"epoch": epoch_it + 1, "loss": loss_value.item()}
             )
         prog.close()
+
+    print("Before quantization -------------")
+    print(model)
+
+    model = approx.auto_quantize(model, pretrained=True)
+
+    print("After quantization -------------")
+    print(model)
