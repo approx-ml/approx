@@ -2,11 +2,11 @@
 Contains stuff to be exported in the public API.
 """
 
-from typing import Any, Callable, List, Optional, Dict
+from typing import Any
 
 from approx.core import _vars
 from approx.core.backend.common import auto_select_backend
-from approx.core.compare import CompareResult, Metric, _CompareRunner
+from approx.core.compare import CompareResult, EvalLoop, _CompareRunner
 from approx.core.device.common import auto_select_device
 
 
@@ -27,11 +27,7 @@ def auto_quantize(model: Any, pretrained: bool = True) -> Any:
 
 
 def compare(
-    model: Any,
-    quantized_model: Any,
-    test_loader: Any,
-    *,
-    eval_loop: Callable[[Any], Dict[Metric, List[float]]]
+    model: Any, quantized_model: Any, test_loader: Any, *, eval_loop: EvalLoop
 ) -> CompareResult:
     """
     Compares your normal model with your quantized model
@@ -39,8 +35,8 @@ def compare(
     Args:
         model: Your normal model
         quantized_model: Your quantized model
-        eval_loop: Your evaluation loop that operates on your model and returns
-                   a dictionary which maps each metric to its history
+        eval_loop: Your evaluation loop that operates on your model and it's data,
+                   and returns a dictionary which maps each metric to its history
 
     Notes:
         For certain backends, we support automatic generation of the eval loop given the
@@ -49,9 +45,7 @@ def compare(
     Returns:
         Useful statistical information
     """
-    runner = _CompareRunner(
-        [model, quantized_model], test_loader, eval_loop
-    )
+    runner = _CompareRunner([model, quantized_model], test_loader, eval_loop)
     return runner.run()
 
 

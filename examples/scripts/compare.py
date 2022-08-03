@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import Dict, List
 
 import torch
 import torch.nn as nn
@@ -46,7 +46,9 @@ def train_mdl(
         prog.close()
 
 
-def eval_loop(model: ToyModel, test_dl: data.DataLoader) -> Dict[Metric, List[float]]:
+def eval_loop(
+    model: ToyModel, test_dl: data.DataLoader
+) -> Dict[Metric, List[float]]:
     model.eval()
     loss_fn = nn.MSELoss()
     loss_history = []
@@ -68,10 +70,7 @@ def eval_loop(model: ToyModel, test_dl: data.DataLoader) -> Dict[Metric, List[fl
             prog.set_postfix({"loss": loss.item()})
         prog.close()
 
-    return {
-        Metric.LOSS: loss_history,
-        Metric.ACCURACY: acc_history
-    }
+    return {Metric.LOSS: loss_history, Metric.ACCURACY: acc_history}
 
 
 def main():

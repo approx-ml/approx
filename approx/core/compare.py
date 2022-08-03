@@ -1,9 +1,10 @@
 import enum
 import statistics
-from typing import Any, Callable, Dict, List
+from typing import Any, Dict, List
 
 from rich.console import Console
 from rich.table import Table
+from typing_extensions import Protocol
 
 
 class Metric(enum.Enum):
@@ -11,10 +12,13 @@ class Metric(enum.Enum):
     ACCURACY = 1
 
 
+class EvalLoop(Protocol):
+    def __call__(self, model: Any, test_dl: Any) -> Dict[Metric, List[float]]:
+        ...
+
+
 class _EvalHistory:
-    def __init__(
-        self, model: Any, histories: Dict[Metric, List[float]]
-    ):
+    def __init__(self, model: Any, histories: Dict[Metric, List[float]]):
         try:
             str(model)
         except Exception:
@@ -174,7 +178,7 @@ class _CompareRunner:
         self,
         models: List[Any],
         test_loader: Any,
-        eval_loop: Callable[..., Dict[Metric, List[float]]],
+        eval_loop: EvalLoop,
     ):
         # todo: auto generate eval loop for certain backends
         self._models = models
@@ -186,7 +190,5 @@ class _CompareRunner:
         # todo: investigate multiprocessing
         for model in self._models:
             metric_hist = self._eval_loop(model, self._test_loader)
-            self._results.append(
-                _EvalHistory(model, metric_hist)
-            )
+            self._results.append(_EvalHistory(model, metric_hist))
         return CompareResult(self._results)
