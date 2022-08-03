@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 import torch
 import torch.nn as nn
@@ -6,6 +6,7 @@ import torch.utils.data as data
 from tqdm import tqdm
 
 import approx
+from approx import CompareMetric as Metric
 
 
 class ToyModel(nn.Module):
@@ -45,7 +46,7 @@ def train_mdl(
         prog.close()
 
 
-def eval_loop(model: ToyModel, test_dl: data.DataLoader) -> List[List[float]]:
+def eval_loop(model: ToyModel, test_dl: data.DataLoader) -> Dict[Metric, List[float]]:
     model.eval()
     loss_fn = nn.MSELoss()
     loss_history = []
@@ -66,13 +67,11 @@ def eval_loop(model: ToyModel, test_dl: data.DataLoader) -> List[List[float]]:
             acc_history.append(acc.item())
             prog.set_postfix({"loss": loss.item()})
         prog.close()
-    # TODO(sudomaze): it would be nice to return the loss and accuracy histories
-    #   as a dict to enable users to customize the formatting of the output
-    # return {
-    #     "loss": loss_history,
-    #     "accuracy": acc_history
-    # }
-    return [loss_history, acc_history]
+
+    return {
+        Metric.LOSS: loss_history,
+        Metric.ACCURACY: acc_history
+    }
 
 
 def main():

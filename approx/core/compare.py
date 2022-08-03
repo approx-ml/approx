@@ -13,9 +13,8 @@ class Metric(enum.Enum):
 
 class _EvalHistory:
     def __init__(
-        self, model: Any, metrics: List[Metric], histories: List[List[float]]
+        self, model: Any, histories: Dict[Metric, List[float]]
     ):
-        assert len(metrics) == len(set(metrics)), "Metrics must be unique"
         try:
             str(model)
         except Exception:
@@ -23,8 +22,12 @@ class _EvalHistory:
                 "Currently does not support models which do not have `__str__`"
             )
         self.model = model
-        self.metrics = metrics
         self._histories = histories
+
+    @property
+    def metrics(self) -> List[Metric]:
+        """Returns the metrics which have been recorded"""
+        return list(self._histories.keys())
 
     def mean(self, metric: Metric) -> float:
         r"""
@@ -90,7 +93,7 @@ class _EvalHistory:
         Returns:
             The history of the given metric
         """
-        return self._histories[self.metrics.index(metric)]
+        return self._histories.get(metric, [])
 
 
 class CompareResult:
@@ -171,14 +174,12 @@ class _CompareRunner:
         self,
         models: List[Any],
         test_loader: Any,
-        eval_loop: Callable[..., List[List[float]]],
-        metrics: List[Metric],
+        eval_loop: Callable[..., Dict[Metric, List[float]]],
     ):
         # todo: auto generate eval loop for certain backends
         self._models = models
         self._test_loader = test_loader
         self._eval_loop = eval_loop
-        self._metrics = metrics
         self._results: List[_EvalHistory] = []
 
     def run(self) -> CompareResult:
@@ -186,6 +187,6 @@ class _CompareRunner:
         for model in self._models:
             metric_hist = self._eval_loop(model, self._test_loader)
             self._results.append(
-                _EvalHistory(model, self._metrics, metric_hist)
+                _EvalHistory(model, metric_hist)
             )
         return CompareResult(self._results)

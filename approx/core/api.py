@@ -2,7 +2,7 @@
 Contains stuff to be exported in the public API.
 """
 
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, Dict
 
 from approx.core import _vars
 from approx.core.backend.common import auto_select_backend
@@ -31,8 +31,7 @@ def compare(
     quantized_model: Any,
     test_loader: Any,
     *,
-    eval_loop: Callable[[Any], List[List[float]]],
-    metrics: Optional[List[Metric]] = None,
+    eval_loop: Callable[[Any], Dict[Metric, List[float]]]
 ) -> CompareResult:
     """
     Compares your normal model with your quantized model
@@ -40,13 +39,8 @@ def compare(
     Args:
         model: Your normal model
         quantized_model: Your quantized model
-        eval_loop: Your evaluation loop that operates on your model and returns list of metric histories
-                    For example, if you select the LOSS metric only, your eval loop should return
-                    [loss_history] where loss_history is a list of the loss encountered per batch.
-                    If you select multiple metrics, the length of the returned list should be the same
-                    as the number of metrics you selected. For example, selecting LOSS and ACCURACY metrics should require
-                    your function return something like [loss_history, accuracy_history].
-        metrics: A list of metrics to compare. If not specified, defaults to LOSS.
+        eval_loop: Your evaluation loop that operates on your model and returns
+                   a dictionary which maps each metric to its history
 
     Notes:
         For certain backends, we support automatic generation of the eval loop given the
@@ -55,13 +49,8 @@ def compare(
     Returns:
         Useful statistical information
     """
-    if metrics is None or len(metrics) == 0:
-        metrics = [Metric.LOSS, Metric.ACCURACY]
-    for metric in metrics:
-        if metric not in Metric:
-            raise ValueError(f"{metric} is not a valid metric")
     runner = _CompareRunner(
-        [model, quantized_model], test_loader, eval_loop, metrics
+        [model, quantized_model], test_loader, eval_loop
     )
     return runner.run()
 
