@@ -1,6 +1,7 @@
 """
 Test Public API
 """
+import torch.nn
 
 
 def test_auto_set_backend():
@@ -54,3 +55,41 @@ def test_set_device():
         device_engine = set_device(DeviceType[device_type])
         assert device_engine.type == DeviceType[device_type]
         assert str(device_engine) == device_type.lower()
+
+
+def test_compare(model_with_random_data):
+    import approx
+
+    model_with_random_data.train_model()
+    compare_result = approx.compare(
+        model_with_random_data.model,
+        model_with_random_data.model,
+        model_with_random_data.test_dl,
+        eval_loop=model_with_random_data.eval_loop,
+    )
+    assert len(compare_result) == 2
+    acc = compare_result.mean("accuracy")
+    loss = compare_result.mean("loss")
+    assert len(acc.values()) == 1
+    assert len(loss.values()) == 1
+
+
+def test_auto_quantize(model_with_random_data):
+    import torch
+
+    import approx
+
+    # enforce pytorch
+    approx.core._vars._APPROX_BACKEND = (
+        approx.core.backend._backend.PyTorchBackend()
+    )
+    model_with_random_data.train_model()
+    quantized_model = approx.auto_quantize(
+        model_with_random_data.model, pretrained=True
+    )
+    assert isinstance(quantized_model, torch.nn.Module)
+    layers = [l for l in quantized_model.net]
+    quantized_layers = list(
+        filter(lambda l: isinstance(l, torch.nn.quantized.Linear), layers)
+    )
+    assert len(quantized_layers) == 3
