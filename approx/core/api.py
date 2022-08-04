@@ -2,7 +2,7 @@
 Contains stuff to be exported in the public API.
 """
 
-from typing import Any, Callable, List, Optional
+from typing import Any
 
 from approx.core import _vars
 from approx.core.backend.common import auto_select_backend
@@ -35,42 +35,15 @@ def compare(
     Args:
         model: Your normal model
         quantized_model: Your quantized model
+        test_loader: The "dataloader" to be used for testing.
         eval_loop: Your evaluation loop that operates on your model and it's data,
                    and returns a dictionary which maps each metric to its history
-
-    Notes:
-        For certain backends, we support automatic generation of the eval loop given the
-        model metrics.
 
     Returns:
         Useful statistical information
     """
     runner = _CompareRunner([model, quantized_model], test_loader, eval_loop)
     return runner.run()
-
-
-def make_eval_loop(
-    model: Any, loss_fn: Callable, acc_fn: Optional[Callable[..., List[bool]]]
-) -> EvalLoop:
-    """
-    Tries to automatically generate an evaluation loop for your model
-    Args:
-        model: Your model to create a loss function for.
-        loss_fn: Loss function which operates on (pred, target) and returns
-                a loss value. Note that this operates on batches.
-        acc_fn: Accuracy function which operates on (pred, target) and returns
-                a list of boolean values depending on whether the prediction matches
-                the target. Note that this operates on batches.
-
-    Returns: An evaluation loop that can be passed into `approx.compare()`
-
-    """
-    if _vars._APPROX_BACKEND is None:
-        raise ValueError(
-            "No backend has been set. "
-            "Please call `approx.auto_set_backend()`."
-        )
-    return _vars._APPROX_BACKEND.generate_eval_loop(model, loss_fn, acc_fn)
 
 
 def auto_set_backend() -> None:

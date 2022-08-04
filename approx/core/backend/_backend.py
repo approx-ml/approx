@@ -3,10 +3,7 @@ Backend engine definitions
 """
 import abc
 import enum
-import warnings
-from typing import Any, Callable, List, Optional
-
-from approx.core.compare import EvalLoop
+from typing import Any
 
 
 class BackendType(enum.Enum):
@@ -37,14 +34,6 @@ class BackendEngine(abc.ABC):
         self.module: Any = None
 
     def auto_quantize(self, model: Any, pretrained: bool) -> Any:
-        raise NotImplementedError("Need to implement this method")
-
-    def generate_eval_loop(
-        self,
-        model: Any,
-        loss_fn: Callable,
-        acc_fn: Optional[Callable[..., List[bool]]],
-    ) -> EvalLoop:
         raise NotImplementedError("Need to implement this method")
 
     def __str__(self) -> str:
@@ -86,22 +75,6 @@ class PyTorchBackend(BackendEngine):
         raise NotImplementedError(
             "Currently not implemented for non-pretrained models"
         )
-
-    def generate_eval_loop(
-        self,
-        model: Any,
-        loss_fn: Callable,
-        acc_fn: Optional[Callable[..., List[bool]]],
-    ) -> EvalLoop:
-        if type(model) is not self.module.nn.Module:
-            raise TypeError("Model must be a `torch.nn.Module`")
-        if type(loss_fn) is not self.module.nn.Module:
-            warnings.warn(
-                "It is highly encouraged to use a `torch.nn.Module` "
-                "as the loss function"
-            )
-        # todo(xiurobert): finish implementing this
-        raise NotImplementedError("Need to implement this method")
 
 
 class NumPyBackend(BackendEngine):
