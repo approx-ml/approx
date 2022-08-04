@@ -1,4 +1,3 @@
-import enum
 import statistics
 from typing import Any, Dict, List
 
@@ -7,18 +6,13 @@ from rich.table import Table
 from typing_extensions import Protocol
 
 
-class Metric(enum.Enum):
-    LOSS = 0
-    ACCURACY = 1
-
-
 class EvalLoop(Protocol):
-    def __call__(self, model: Any, test_dl: Any) -> Dict[Metric, List[float]]:
+    def __call__(self, model: Any, test_dl: Any) -> Dict[str, List[float]]:
         ...
 
 
 class _EvalHistory:
-    def __init__(self, model: Any, histories: Dict[Metric, List[float]]):
+    def __init__(self, model: Any, histories: Dict[str, List[float]]):
         try:
             str(model)
         except Exception:
@@ -29,11 +23,11 @@ class _EvalHistory:
         self._histories = histories
 
     @property
-    def metrics(self) -> List[Metric]:
+    def metrics(self) -> List[str]:
         """Returns the metrics which have been recorded"""
         return list(self._histories.keys())
 
-    def mean(self, metric: Metric) -> float:
+    def mean(self, metric: str) -> float:
         r"""
         Computes the mean (also known as the average)
 
@@ -52,7 +46,7 @@ class _EvalHistory:
         # and computing may take significant time
         return statistics.mean(self[metric])
 
-    def std(self, metric: Metric) -> float:
+    def std(self, metric: str) -> float:
         r"""
         Computes the standard deviation of the metric history
 
@@ -69,7 +63,7 @@ class _EvalHistory:
         """
         return statistics.pstdev(self[metric])
 
-    def median(self, metric: Metric) -> float:
+    def median(self, metric: str) -> float:
         r"""
         Computes the median of the metric history
 
@@ -86,7 +80,7 @@ class _EvalHistory:
         """
         return statistics.median(self[metric])
 
-    def __getitem__(self, metric: Metric) -> List[float]:
+    def __getitem__(self, metric: str) -> List[float]:
         """
         Retrieves the metric history for some metric. Useful if you need
         access to the actual history itself
@@ -108,7 +102,7 @@ class CompareResult:
     def __init__(self, results: List[_EvalHistory]):
         self._results = results
 
-    def mean(self, metric: Metric) -> Dict[str, float]:
+    def mean(self, metric: str) -> Dict[str, float]:
         r"""
         Computes the mean for some particular metric
 
@@ -128,7 +122,7 @@ class CompareResult:
             str(result.model): result.mean(metric) for result in self._results
         }
 
-    def std(self, metric: Metric) -> Dict[str, float]:
+    def std(self, metric: str) -> Dict[str, float]:
         r"""
         Compares the standard deviations for some particular metric
 
@@ -152,7 +146,7 @@ class CompareResult:
         # crude table printer, should be replaced with a more fancy one
         console = Console()
         for metric in self._results[0].metrics:
-            console.rule(f"[bold red]{metric.name.lower()}")
+            console.rule(f"[bold red]{metric}")
             table = Table(
                 show_header=True, header_style="bold magenta", show_lines=True
             )
@@ -180,7 +174,6 @@ class _CompareRunner:
         test_loader: Any,
         eval_loop: EvalLoop,
     ):
-        # todo: auto generate eval loop for certain backends
         self._models = models
         self._test_loader = test_loader
         self._eval_loop = eval_loop

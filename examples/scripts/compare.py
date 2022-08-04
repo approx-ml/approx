@@ -6,7 +6,6 @@ import torch.utils.data as data
 from tqdm import tqdm
 
 import approx
-from approx import CompareMetric as Metric
 
 
 class ToyModel(nn.Module):
@@ -48,7 +47,7 @@ def train_mdl(
 
 def eval_loop(
     model: ToyModel, test_dl: data.DataLoader
-) -> Dict[Metric, List[float]]:
+) -> Dict[str, List[float]]:
     model.eval()
     loss_fn = nn.MSELoss()
     loss_history = []
@@ -70,7 +69,7 @@ def eval_loop(
             prog.set_postfix({"loss": loss.item()})
         prog.close()
 
-    return {Metric.LOSS: loss_history, Metric.ACCURACY: acc_history}
+    return {"loss": loss_history, "accuracy": acc_history}
 
 
 def main():
