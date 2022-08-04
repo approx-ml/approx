@@ -142,8 +142,11 @@ class CompareResult:
             str(result.model): result.std(metric) for result in self._results
         }
 
+    def __len__(self) -> int:
+        """Returns how many models were compared"""
+        return len(self._results)
+
     def __str__(self) -> str:
-        # crude table printer, should be replaced with a more fancy one
         console = Console()
         for metric in self._results[0].metrics:
             console.rule(f"[bold red]{metric}")
