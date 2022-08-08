@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "approx-ml"
+name = "approxlib"
 version = "0.1.0"
 description = "Too lazy to quantize? Don't worry! Just tell approx to cast everything automatically!"
 license = "Apache-2.0"
