@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "approx"
+name = "approx-ml"
 version = "0.1.0"
 description = "Too lazy to quantize? Don't worry! Just tell approx to cast everything automatically!"
 license = "Apache-2.0"
@@ -7,9 +7,10 @@ authors = ["sudomaze", "xiurobert"]
 readme = 'README.md'
 homepage = "https://github.com/approx-ml/approx"
 repository = "https://github.com/approx-ml/approx"
+# NOTE(sudomaze): set of classifiers is taken from https://pypi.org/classifiers/
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
-    "License :: OSI Approved :: Apache-2.0 License",
+    "License :: OSI Approved :: Apache Software License",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
@@ -17,6 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.7",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
+packages = [{ include = "approx" }]
 
 [tool.poetry.dependencies]
 python = "^3.7.13"

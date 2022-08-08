@@ -16,3 +16,4 @@ poetry.lock
 examples/**/datasets
 
 site/
+.secrets
