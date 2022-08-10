@@ -21,3 +21,5 @@ jobs:
         poetry install
     - name: Build documentation
       run: poetry run mkdocs build
+    - name: Deploy documentation
+      run: mkdocs gh-deploy --force
