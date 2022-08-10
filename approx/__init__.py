@@ -1,16 +1,10 @@
 from approx.core._vars import backend, device
-from approx.core.api import (
-    auto_quantize,
-    auto_set_backend,
-    auto_set_device,
-    compare,
-)
+from approx.core.api import auto_quantize, auto_set_backend, compare
 
 # Please keep this sorted
 __all__ = [
     "auto_quantize",
     "auto_set_backend",
-    "auto_set_device",
     "backend",
     "compare",
     "device",
