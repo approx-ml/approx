@@ -22,4 +22,4 @@ jobs:
     - name: Build documentation
       run: poetry run mkdocs build
     - name: Deploy documentation
-      run: mkdocs gh-deploy --force
+      run: poetry run mkdocs gh-deploy --force
