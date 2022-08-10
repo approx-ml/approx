@@ -29,9 +29,6 @@ jobs:
     - name: Build wheels
       run: |
           poetry build
-    - name: Build wheels
-      run: |
-          poetry build
     - name: Publish Package
       run: |
         python -m poetry publish --username=${{ secrets.PYPIUSERNAME }} --password=${{ secrets.PYPIPASSWORD }}
